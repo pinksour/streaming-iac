@@ -3,14 +3,14 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   subnets            = var.subnet_ids
-  security_groups    = var.security_group_ids
+  security_groups    = [var.sg_alb_id]
 }
 
 resource "aws_lb_target_group" "web" {
   name     = "${var.name}-tg-web"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = data.aws_vpc.selected.id
+  vpc_id   = var.vpc_id
 
   health_check {
     path                = "/"

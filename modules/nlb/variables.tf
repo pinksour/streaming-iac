@@ -1,5 +1,6 @@
 variable "name"       { type = string }
 variable "subnet_ids" { type = list(string) }
+variable "sg_nlb_id"  { type = string }
 variable "targets" {
   type = map(object({
     port               = number

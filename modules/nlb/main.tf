@@ -14,6 +14,7 @@ resource "aws_lb" "nlb" {
   internal           = true
   load_balancer_type = "network"
   subnets            = var.subnet_ids
+  security_groups    = [var.sg_nlb_id]
 }
 
 resource "aws_lb_target_group" "tg" {
@@ -21,7 +22,7 @@ resource "aws_lb_target_group" "tg" {
   name     = "${var.name}-tg-${each.key}"
   port     = each.value.port
   protocol = each.value.protocol
-  vpc_id   = data.aws_vpc.selected.id
+  vpc_id   = var.vpc_id
 
   health_check {
     protocol            = each.value.protocol
