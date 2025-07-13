@@ -55,13 +55,18 @@ resource "aws_lb_listener" "listener" {
 }
 
 resource "aws_lb_target_group_attachment" "attach" {
+  # var.targets 각 항목에서 instance_ids 리스트를 꺼내
+  # "<tg이름>-<인스턴스ID>"를 맵 키로, 값으로는 { tg, id } 오브젝트를 생성
   for_each = {
-    for att in local.attachments : "${att.name}-${att.instance_id}" => att
+    for tg_name, cfg in var.targets :
+    # 각 instance_id별로 고유 키 생성
+    for id in cfg.instance_ids :
+    "${tg_name}-${id}" => { tg = tg_name, id = id }
   }
 
-  target_group_arn    = aws_lb_target_group.tg[each.value.name].arn
-  target_id           = each.value.instance_id
-  port                = aws_lb_target_group.tg[each.value.name].port
+  target_group_arn    = aws_lb_target_group.tg[each.value.tg].arn
+  target_id           = each.value.id
+  port                = aws_lb_target_group.tg[each.value.tg].port
 }
 
 output "nlb_dns" { value = aws_lb.nlb.dns_name }
