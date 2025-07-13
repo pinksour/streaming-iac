@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "tg" {
     #  content { value = each.value.health_check_path }
 
     path = each.value.protocol == "HTTP" || each.value.protocol == "HTTPS" ? each.value.health_check_path : null
-    }
+    #}
   }
 }
 
