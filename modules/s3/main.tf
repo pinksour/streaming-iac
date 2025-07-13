@@ -1,3 +1,8 @@
+resource "aws_s3_bucket" "this" {
+  bucket = var.bucket
+  # (acl은 별도 aws_s3_bucket_acl로 처리)
+}
+
 resource "aws_s3_bucket_acl" "this_acl" {
   bucket = aws_s3_bucket.this.id
   acl    = "private"
