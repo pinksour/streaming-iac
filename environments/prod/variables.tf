@@ -27,7 +27,6 @@ variable "db_engine"            { type = string }
 variable "db_engine_version"    { type = string }
 variable "db_instance_class"    { type = string }
 variable "db_allocated_storage" { type = number }
-variable "rds_sg_ids"           { type = list(string) }
 
 # S3
 variable "s3_bucket_name"       { type = string }
