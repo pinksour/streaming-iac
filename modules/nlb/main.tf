@@ -1,3 +1,14 @@
+locals {
+  attachments = flatten([
+  for tg_key, tg_val in var.targets : [
+    for inst_id in tg_val.instance_ids : {
+      name = tg_key
+      instance_id = inst_id
+      }
+    ]
+  ])
+}
+
 resource "aws_lb" "nlb" {
   name               = "${var.name}-nlb"
   internal           = true
@@ -36,12 +47,12 @@ resource "aws_lb_listener" "listener" {
 
 resource "aws_lb_target_group_attachment" "attach" {
   for_each = {
-    for k, v in var.targets : k => v.instance_ids
+    for att in local.attachments : "${att.name}-${att.instance_id}" => att
   }
-  count               = length(each.value)
-  target_group_arn    = aws_lb_target_group.tg[each.key].arn
-  target_id           = each.value[count.index]
-  port                = aws_lb_target_group.tg[each.key].port
+
+  target_group_arn    = aws_lb_target_group.tg[each.value.name].arn
+  target_id           = each.value.instance_id
+  port                = aws_lb_target_group.tg[each.value.name].port
 }
 
 output "nlb_dns" { value = aws_lb.nlb.dns_name }
