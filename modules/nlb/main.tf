@@ -59,7 +59,6 @@ resource "aws_lb_target_group_attachment" "attach" {
   # "<tg이름>-<인스턴스ID>"를 맵 키로, 값으로는 { tg, id } 오브젝트를 생성
   for_each = {
     for tg_name, cfg in var.targets :
-    # 각 instance_id별로 고유 키 생성
     for id in cfg.instance_ids :
     "${tg_name}-${id}" => { tg = tg_name, id = id }
   }
