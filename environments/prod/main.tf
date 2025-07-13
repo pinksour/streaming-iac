@@ -7,7 +7,7 @@ module "network" {
   name                = var.environment
   vpc_cidr            = var.vpc_cidr
   azs                 = var.azs
-  public_subnet_cidrs = var.public_subnet_ids
+  public_subnet_ids = var.public_subnet_ids
 }
 
 # EC2 instances
