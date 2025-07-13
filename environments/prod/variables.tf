@@ -12,7 +12,7 @@ variable "instance_type"        { type = string }
 variable "key_name"             { type = string }
 
 # Security Group Settings
-variabel "sg_alb_id"            { type = string }
+variable "sg_alb_id"            { type = string }
 variable "sg_web_id"            { type = string }
 variable "sg_nlb_id"            { type = string }
 variable "sg_was_id"            { type = string }
