@@ -33,12 +33,12 @@ resource "aws_lb_target_group" "tg" {
     unhealthy_threshold = 2
 
     # HTTP/HTTPS 일 때만 path 지정
-      dynamic "path" {
-        for_each = contains(["HTTP", "HTTPS"], upper(each.value.protocol)) ? [1] : []
-        content { value = each.value.health_check_path }
+    #dynamic "path" {
+    #  for_each = contains(["HTTP", "HTTPS"], upper(each.value.protocol)) ? [1] : []
+    #  content { value = each.value.health_check_path }
 
-      #path = each.value.protocol == "HTTP" || each.value.protocol == "HTTPS" ? each.value.health_check_path : null
-      }
+    path = each.value.protocol == "HTTP" || each.value.protocol == "HTTPS" ? each.value.health_check_path : null
+    }
   }
 }
 
