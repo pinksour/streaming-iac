@@ -8,8 +8,4 @@ resource "aws_s3_bucket_acl" "this_acl" {
   acl    = "private"
 }
 
-locals {
-  files = fileset(var.service_data_path, "**/*")
-}
-
 output "bucket_name" { value = aws_s3_bucket.this.id }
