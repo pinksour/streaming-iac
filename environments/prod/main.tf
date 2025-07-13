@@ -106,5 +106,4 @@ module "rds" {
 module "s3" {
   source             = "../../modules/s3"
   bucket             = var.s3_bucket_name
-  service_data_path  = var.service_data_path
 }

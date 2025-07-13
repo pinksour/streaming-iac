@@ -8,13 +8,13 @@ vpc_cidr             = "172.31.0.0/16"
 azs                  = ["apne2-az1","apne2-az3"]
 
 # 3. 퍼블릭 서브넷 (모듈이 새로 만드는 CIDR → 콘솔 확인된 CIDR 그대로 사용)
-public_subnet_cidrs  = [
-  "172.31.2.0/24",    # WEB-PV-APNE2A
-  "172.31.130.0/24",  # WEB-PV-APNE2C
-  "172.31.3.0/24",    # WAS-PV-APNE2A
-  "172.31.131.0/24",  # WAS-PV-APNE2C
-  "172.31.72.0/24",   # RDS-Database-2A
-  "172.31.26.0/24"    # RDS-Database-2C
+public_subnet_ids  = [
+  "subnet-05ee35d77f51e58ca",    # WEB-PV-APNE2A
+  "subnet-06fc8c1112aa20b99",    # WEB-PV-APNE2C
+  "subnet-0dc4f56779ac99d43",    # WAS-PV-APNE2A
+  "subnet-02149d60df849e30c",    # WAS-PV-APNE2C
+  "subnet-085ce59be9f98ada2",    # RDS-Database-2A
+  "subnet-0f38701902c589402"     # RDS-Database-2C
 ]
 
 # 4. EC2 공통 설정
