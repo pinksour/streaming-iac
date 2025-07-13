@@ -4,7 +4,7 @@ variable "environment"          { type = string }
 # VPC Settings
 variable "vpc_cidr"             { type = string }
 variable "azs"                  { type = list(string) }
-variable "public_subnet_cidrs"  { type = list(string) }
+variable "public_subnet_ids"    { type = list(string) }
 
 # AMI Settings
 variable "web_ami"              { type = string }
