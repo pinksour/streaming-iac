@@ -24,13 +24,21 @@ resource "aws_lb_target_group" "tg" {
   protocol = each.value.protocol
   vpc_id   = var.vpc_id
 
+  # TCP 프로토콜인 경우 path 속성 제거
   health_check {
     protocol            = each.value.protocol
     port                = each.value.port
-    path                = each.value.health_check_path
     interval            = 30
     healthy_threshold   = 2
     unhealthy_threshold = 2
+
+    # HTTP/HTTPS 일 때만 path 지정
+      dynamic "path" {
+        for_each = contains(["HTTP", "HTTPS"], upper(each.value.protocol)) ? [1] : []
+        content { value = each.value.health_check_path }
+
+      #path = each.value.protocol == "HTTP" || each.value.protocol == "HTTPS" ? each.value.health_check_path : null
+      }
   }
 }
 
