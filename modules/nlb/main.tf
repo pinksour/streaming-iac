@@ -1,9 +1,24 @@
+variable "name"       { type = string }
+variable "subnet_ids" { type = list(string) }
+variable "vpc_id"     { type = string }
+variable "sg_nlb_id"  { type = string }
+variable "targets" {
+  type = map(object({
+    port              = number
+    protocol          = string
+    instance_ids      = list(string)
+    health_check_path = string
+  }))
+}
+
 locals {
+  # var.targets 를 평탄화(flatten)해서 attachments 리스트 생성
   attachments = flatten([
-  for tg_key, tg_val in var.targets : [
-    for inst_id in tg_val.instance_ids : {
-      name = tg_key
-      instance_id = inst_id
+    for tg_key, cfg in var.targets : [
+      for inst in cfg.instance_ids : {
+        key         = "${tg_key}-${inst}"
+        tg          = tg_key
+        instance_id = inst
       }
     ]
   ])
@@ -19,12 +34,12 @@ resource "aws_lb" "nlb" {
 
 resource "aws_lb_target_group" "tg" {
   for_each = var.targets
+
   name     = "${var.name}-tg-${each.key}"
   port     = each.value.port
   protocol = each.value.protocol
   vpc_id   = var.vpc_id
 
-  # TCP 프로토콜인 경우 path 속성 제거
   health_check {
     protocol            = each.value.protocol
     port                = each.value.port
@@ -32,13 +47,10 @@ resource "aws_lb_target_group" "tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
 
-    # HTTP/HTTPS 일 때만 path 지정
-    #dynamic "path" {
-    #  for_each = contains(["HTTP", "HTTPS"], upper(each.value.protocol)) ? [1] : []
-    #  content { value = each.value.health_check_path }
-
-    path = each.value.protocol == "HTTP" || each.value.protocol == "HTTPS" ? each.value.health_check_path : null
-    #}
+    # HTTP/HTTPS 일 때만 path, TCP 일 땐 null 처리
+    path = (
+      each.value.protocol == "HTTP" || each.value.protocol == "HTTPS"
+    ) ? each.value.health_check_path : null
   }
 }
 
@@ -55,17 +67,15 @@ resource "aws_lb_listener" "listener" {
 }
 
 resource "aws_lb_target_group_attachment" "attach" {
-  # var.targets 각 항목에서 instance_ids 리스트를 꺼내
-  # "<tg이름>-<인스턴스ID>"를 맵 키로, 값으로는 { tg, id } 오브젝트를 생성
   for_each = {
-    for tg_name, cfg in var.targets :
-    for id in cfg.instance_ids :
-    "${tg_name}-${id}" => { tg = tg_name, id = id }
+    for att in local.attachments : att.key => att
   }
 
-  target_group_arn    = aws_lb_target_group.tg[each.value.tg].arn
-  target_id           = each.value.id
-  port                = aws_lb_target_group.tg[each.value.tg].port
+  target_group_arn = aws_lb_target_group.tg[each.value.tg].arn
+  target_id        = each.value.instance_id
+  port             = aws_lb_target_group.tg[each.value.tg].port
 }
 
-output "nlb_dns" { value = aws_lb.nlb.dns_name }
+output "nlb_dns" {
+  value = aws_lb.nlb.dns_name
+}
