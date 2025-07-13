@@ -5,7 +5,7 @@ environment          = "prod"
 vpc_cidr             = "172.31.0.0/16"
 
 # 2. AZ 리스트
-azs                  = ["apne2-az1","apne2-az2","apne2-az3"]
+azs                  = ["apne2-az1","apne2-az3"]
 
 # 3. 퍼블릭 서브넷 (모듈이 새로 만드는 CIDR → 콘솔 확인된 CIDR 그대로 사용)
 public_subnet_cidrs  = [
@@ -23,7 +23,7 @@ instance_type        = "t2.micro"
 key_name             = "prod-key"
 
 # 5. 보안 그룹
-sg_alb_id            = "sg-001a7f9a63a27bfb4"
+sg_alb_id            = "sg-001a7f9f63a27bfb4"
 sg_web_id            = "sg-07e2113edfa1f202f"
 sg_nlb_id            = "sg-07072afa0dc2f7245"
 sg_was_id            = "sg-05d3848aeae20216a"
