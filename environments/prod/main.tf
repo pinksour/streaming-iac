@@ -66,6 +66,7 @@ module "nlb" {
   source     = "../../modules/nlb"
   name       = var.environment
   subnet_ids = module.network.public_subnets
+  sg_nlb_id  = var.sg_nlb_id
   targets = {
     login = {
       port              = 3001
