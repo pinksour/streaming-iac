@@ -67,6 +67,7 @@ module "nlb" {
   name       = var.environment
   subnet_ids = module.network.public_subnets
   sg_nlb_id  = var.sg_nlb_id
+  vpc_id     = data.aws_vpc.selected.id
   targets = {
     login = {
       port              = 3001
