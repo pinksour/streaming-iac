@@ -6,8 +6,8 @@ resource "aws_db_subnet_group" "this" {
 resource "aws_db_instance" "this" {
   identifier             = var.name
   engine                 = var.engine
-  engine_version         = var.engine_version
-  instance_class         = var.instance_class
+  engine_version         = "8.0.28"
+  instance_class         = "db.t3.micro"
   allocated_storage      = var.allocated_storage
   username               = var.username
   password               = var.password
