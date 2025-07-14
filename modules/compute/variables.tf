@@ -1,12 +1,3 @@
-/**
- * Variables for the Compute module
- */
-variable "web_ami" {
-  description = "Optional override for AMI ID"
-  type = string
-  default = "" # 공식 Amazon Linux 2
-}
-
 variable "env" {
   description = "Deployment environment (e.g., dev, prod)"
   type        = string

@@ -9,7 +9,6 @@ variable "public_subnet_ids"    { type = list(string) }
 # AMI Settings
 variable "web_ami" {
   type = string
-  default = ""
 }
 variable "instance_type"        { type = string }
 variable "key_name"             { type = string }

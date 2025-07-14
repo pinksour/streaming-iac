@@ -1,3 +1,12 @@
+data "aws_ami" "latest_amazon_linux2" {
+  most_recent = true
+  owners = ["amazon"]
+  filter {
+    name = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
 data "aws_vpc" "selected" {
   id = module.network.vpc_id
 }
@@ -12,9 +21,9 @@ module "network" {
 
 # EC2 instances
 resource "aws_instance" "web" {
-  ami                         = var.web_ami
+  ami = data.aws_ami.latest_amazon_linux2.id # 동적 할당!
   instance_type               = var.instance_type
-  subnet_id                   = module.network.public_subnets[0]
+  subnet_ids                   = slice(module.network.public_subnets, 0, 2)
   vpc_security_group_ids      = [ var.sg_web_id ]
   associate_public_ip_address = true
   tags = {
@@ -23,7 +32,7 @@ resource "aws_instance" "web" {
 }
 
 resource "aws_instance" "login" {
-  ami                    = var.web_ami
+  ami = data.aws_ami.latest_amazon_linux2.id
   instance_type          = var.instance_type
   subnet_id              = module.network.public_subnets[1]
   vpc_security_group_ids = [ var.sg_was_id ]
@@ -33,7 +42,7 @@ resource "aws_instance" "login" {
 }
 
 resource "aws_instance" "db" {
-  ami                    = var.web_ami
+  ami                    = data.aws_ami.latest_amazon_linux2.id
   instance_type          = var.instance_type
   subnet_id              = module.network.public_subnets[2]
   vpc_security_group_ids = var.rds_sg_ids
@@ -43,7 +52,7 @@ resource "aws_instance" "db" {
 }
 
 resource "aws_instance" "media" {
-  ami                    = var.web_ami
+  ami                    = data.aws_ami.latest_amazon_linux2.id
   instance_type          = var.instance_type
   subnet_id              = module.network.public_subnets[3]
   vpc_security_group_ids = [ var.sg_nlb_id ]
