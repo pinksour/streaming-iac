@@ -18,7 +18,7 @@ public_subnet_ids  = [
 ]
 
 # 4. EC2 공통 설정
-web_ami              = "ami-0abcdef1234567890"	# Amazon Linux 2 의 공식 AMI ID(예시)
+web_ami              = var.web_ami != null ? var.web_ami : data.aws_ami.latest_amazon_linux2.id	# Amazon Linux 2 의 공식 AMI ID(예시)
 instance_type        = "t2.micro"
 key_name             = "prod-key"
 
