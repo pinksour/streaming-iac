@@ -11,17 +11,6 @@ locals {
   ])
 }
 
-# 2) 리스트 → map 변환
-locals {
-  attachments = {
-    for att in local.attachments_list :
-    att.key => {
-      tg = att.tg,
-      id = att.id
-    }
-  }
-}
-
 resource "aws_lb" "nlb" {
   name               = "${var.name}-nlb"
   internal           = true
