@@ -6,10 +6,6 @@ variable "vpc_cidr"             { type = string }
 variable "azs"                  { type = list(string) }
 variable "public_subnet_ids"    { type = list(string) }
 
-# AMI Settings
-variable "web_ami" {
-  type = string
-}
 variable "instance_type"        { type = string }
 variable "key_name"             { type = string }
 
