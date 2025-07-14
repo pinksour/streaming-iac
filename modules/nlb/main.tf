@@ -1,14 +1,12 @@
 locals {
   # var.targets 를 평탄화(flatten)해서 attachments 리스트 생성
-  attachments = flatten([
-    for tg_key, cfg in var.targets : [
-      for inst in cfg.instance_ids : {
-        key         = "${tg_key}-${inst}"
-        tg          = tg_key
-        instance_id = inst
-      }
-    ]
-  ])
+  attachments = {
+    for tg_name, cfg in var.targets :
+    for id in cfg.instance_ids : "${tg_name}-${id}" => {
+      tg = tg_name
+      id = id
+    }
+  }
 }
 
 resource "aws_lb" "nlb" {
@@ -54,9 +52,7 @@ resource "aws_lb_listener" "listener" {
 }
 
 resource "aws_lb_target_group_attachment" "attach" {
-  for_each = {
-    for att in local.attachments : att.key => att
-  }
+  for_each = local.attachments
 
   target_group_arn = aws_lb_target_group.tg[each.value.tg].arn
   target_id        = each.value.instance_id
