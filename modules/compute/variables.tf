@@ -4,7 +4,7 @@
 variable "web_ami" {
   description = "Optional override for AMI ID"
   type = string
-  default = "ami-0abcdef1234567890" # 공식 Amazon Linux 2
+  default = "" # 공식 Amazon Linux 2
 }
 
 variable "env" {

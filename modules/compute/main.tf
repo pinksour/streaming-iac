@@ -7,6 +7,12 @@ data "aws_ami" "latest_amazon_linux2" {
     values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
 }
+
+locals {
+  web_ec2_ami = length(var.web_ami) > 0
+    ? var.web_ami
+    : data.aws_ami.latest_amazon_linux2.id
+}
 	
 # IAM Instance Profile 선언
 resource "aws_iam_instance_profile" "vod_media" {
@@ -16,7 +22,7 @@ resource "aws_iam_instance_profile" "vod_media" {
 
 # EC2 Instance Profile(→ vod-media-role) 적용
 resource "aws_instance" "web" {
-  ami = data.aws_ami.latest_amazon_linux2.id
+  ami = local.web_ec2_ami
   instance_type = var.instance_type
   iam_instance_profile = aws_iam_instance_profile.vod_media.name
 
