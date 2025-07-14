@@ -1,10 +1,24 @@
+# 1) 중첩 루프로 생성된 객체 리스트
 locals {
   # var.targets 를 평탄화(flatten)해서 attachments 리스트 생성
+  attachments_list = flatten ([
+    for tg_name, cfg in var.targets : [
+      for id in cfg.instance_ids : {
+        key = "${tg_name}-${id}"
+        tg = tg_name
+        id = id
+      }
+    ]
+  ])
+}
+
+# 2) 리스트 → map 변환
+locals {
   attachments = {
-    for tg_name, cfg in var.targets :
-    for id in cfg.instance_ids : "${tg_name}-${id}" => {
-      tg = tg_name
-      id = id
+    for att in local.attachments_list :
+    att.key => {
+      tg = att.tg,
+      id = att.id
     }
   }
 }
@@ -51,12 +65,13 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
+# 여기엔 중첩된 for 없이 하나의 map literal만 사용
 resource "aws_lb_target_group_attachment" "attach" {
   for_each = local.attachments
 
   target_group_arn = aws_lb_target_group.tg[each.value.tg].arn
-  target_id        = each.value.instance_id
-  port             = aws_lb_target_group.tg[each.value.tg].port
+  target_id           = each.value.id
+  port                = aws_lb_target_group.tg[each.value.tg].port
 }
 
 output "nlb_dns" {
