@@ -1,12 +1,11 @@
 # 1) 중첩 루프로 생성된 객체 리스트
 locals {
   # var.targets 를 평탄화(flatten)해서 attachments 리스트 생성
-  attachments_list = flatten ([
-    for tg_name, cfg in var.targets : [
-      for id in cfg.instance_ids : {
-        key = "${tg_name}-${id}"
-        tg = tg_name
-        id = id
+  attachments = flatten ([
+    for tg_key, cfg in var.targets : [
+      for inst_id in cfg.instance_ids : {
+        tg = tg_key
+        id = inst_id
       }
     ]
   ])
@@ -67,11 +66,20 @@ resource "aws_lb_listener" "listener" {
 
 # 여기엔 중첩된 for 없이 하나의 map literal만 사용
 resource "aws_lb_target_group_attachment" "attach" {
-  for_each = local.attachments
+  count = length(local.attachments) # plan 단계에 length만 알면 OK
 
-  target_group_arn = aws_lb_target_group.tg[each.value.tg].arn
-  target_id           = each.value.id
-  port                = aws_lb_target_group.tg[each.value.tg].port
+  # 각 인덱스로부터 tg, id 꺼내서 참조
+  target_group_arn = aws_lb_target_group.tg[
+    local.attachments[count.index].tg
+  ].arn
+
+  target_id = local.attachments[
+    count.index
+  ].id
+
+  port = aws_lb_target_group.tg[
+    local.attachments[count.index].tg
+  ].port
 }
 
 output "nlb_dns" {
