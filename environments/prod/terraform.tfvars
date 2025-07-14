@@ -20,6 +20,7 @@ public_subnet_ids  = [
 # 4. EC2 공통 설정
 instance_type        = "t2.micro"
 key_name             = "prod-key"
+web_ami              = "ami-0abcdef1234567890"
 
 # 5. 보안 그룹
 sg_alb_id            = "sg-001a7f9f63a27bfb4"
