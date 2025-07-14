@@ -23,7 +23,7 @@ module "network" {
 resource "aws_instance" "web" {
   ami = data.aws_ami.latest_amazon_linux2.id # 동적 할당!
   instance_type               = var.instance_type
-  subnet_ids                   = slice(module.network.public_subnets, 0, 2)
+  subnet_id                   = module.network.public_subnets[0]
   vpc_security_group_ids      = [ var.sg_web_id ]
   associate_public_ip_address = true
   tags = {
